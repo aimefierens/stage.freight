@@ -1,3 +1,5 @@
+import controlP5.*;
+
 /**
  * Loop. 
  * 
@@ -11,6 +13,8 @@ Movie movie;
 int[] backgroundPixels;
 int numPixels;
 PImage backgroundImage;
+ControlP5 cp5;
+int myThreshold = 100;
 
 void setup() {
   size(1280, 720);
@@ -24,18 +28,20 @@ void setup() {
   backgroundPixels = backgroundImage.pixels;
 
   loadPixels();
+
+  cp5 = new ControlP5(this);
+  // name, minValue, maxValue, defaultValue, x, y, width, height
+  cp5.addSlider("threshold", 0, 500, myThreshold, 10, 10, 100, 14);
 }
 
-
-//void movieEvent(Movie m) {
-//  m.read();
-//}
+public void threshold(int newValue) {
+  myThreshold = newValue;
+}
 
 void draw() {
   if (movie.available()) {
     movie.read();
     movie.loadPixels();
-    int presenceSum = 0;
     for (int i = 0; i < numPixels; i++) {
       color currColor = movie.pixels[i];
       color bkgdColor = backgroundPixels[i];
@@ -51,22 +57,14 @@ void draw() {
       int diffR = abs(currR - bkgdR);
       int diffG = abs(currG - bkgdG);
       int diffB = abs(currB - bkgdB);
-      
-      if (diffR + diffG + diffB > 250) {
-          pixels[i] = color(255, 255, 255);
-      } else {
-          pixels[i] = color(0, 0, 0);
-      }
-            //pixels[i] = color(diffR, diffG, diffB);
 
-          
-      // Add these differences to the running tally
-      presenceSum += diffR + diffG + diffB;
-      // Render the difference image to the screen
-      // The following line does the same thing much faster, but is more technical
-      //pixels[i] = 0xFF000000 | (diffR << 16) | (diffG << 8) | diffB;
+      if (diffR + diffG + diffB > myThreshold) {
+        pixels[i] = color(255, 255, 255);
+      } else {
+        pixels[i] = color(0, 0, 0);
+      }
+      //pixels[i] = color(diffR, diffG, diffB);
     }
     updatePixels(); // Notify that the pixels[] array has changed
   }
-  
 }
