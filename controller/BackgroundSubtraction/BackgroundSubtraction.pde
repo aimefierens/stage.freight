@@ -51,14 +51,21 @@ void draw() {
       int diffR = abs(currR - bkgdR);
       int diffG = abs(currG - bkgdG);
       int diffB = abs(currB - bkgdB);
+
+      if (diffR + diffG + diffB > 200) {
+        //pixels[i] = color(255, 255, 255);
+        pixels[i] = bkgdColor;
+                              } else {
+        pixels[i] = color(0, 0, 0);
+      }
+      //pixels[i] = color(diffR, diffG, diffB);
+
       // Add these differences to the running tally
       presenceSum += diffR + diffG + diffB;
       // Render the difference image to the screen
-      pixels[i] = color(diffR, diffG, diffB);
       // The following line does the same thing much faster, but is more technical
       //pixels[i] = 0xFF000000 | (diffR << 16) | (diffG << 8) | diffB;
     }
     updatePixels(); // Notify that the pixels[] array has changed
   }
-  
 }
